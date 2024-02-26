@@ -1,17 +1,26 @@
 <?php
+require_once 'Board.php';
+require_once 'GameEngine.php';
+const ROWS = 10;
+const COLS = 10;
 
-require_once 'GameOfLife.php';
+$board = new Board(ROWS, COLS);
+$game = new GameEngine($board);
 
-$game = new GameOfLife(8, 20);
-print "GAME START: \n";
-print "Generate... \n";
-$gameSpace = $game->generateLife();
-$game->printLife($gameSpace);
+// можно указать в ручную
+//$board->setCell(1, 2, 1);
+//$board->setCell(2, 2, 1);
+//$board->setCell(3, 2, 1);
 
-while (true) {
-    print "New Generation: \n";
-    $gameSpace = $game->runLife($gameSpace);
-    $game->printLife($gameSpace);
+// или воспользоваться автогенерацией
+$game->randomGenerate($board, ROWS, COLS, 15);
 
+echo "Initial state:\n";
+$board->displayBoard();
+
+while (true){
+    echo "\nNext generation:\n";
+    $game->getNextGeneration();
+    $board->displayBoard();
     sleep(5);
 }
