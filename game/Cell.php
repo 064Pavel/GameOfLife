@@ -1,5 +1,6 @@
 <?php
 
+namespace Game;
 class Cell
 {
     private bool $isAlive;
@@ -9,12 +10,12 @@ class Cell
         $this->isAlive = $isAlive;
     }
 
-    public function isAlive(): bool
+    public function getIsAlive(): bool
     {
         return $this->isAlive;
     }
 
-    public function setAlive(bool $isAlive): void
+    public function setIsAlive(bool $isAlive): void
     {
         $this->isAlive = $isAlive;
     }

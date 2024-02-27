@@ -1,26 +1,48 @@
 <?php
-require_once 'Board.php';
-require_once 'GameEngine.php';
-const ROWS = 10;
-const COLS = 10;
 
-$board = new Board(ROWS, COLS);
-$game = new GameEngine($board);
+require_once './vendor/autoload.php';
+require_once 'settings.php';
+
+use Game\Board;
+use Game\BoardHistory;
+use Game\GameEngine;
+use Game\Rules;
+
+$board = new Board(BOARD_ROWS, BOARD_COLS);
+$rules = new Rules($board);
+$game = new GameEngine($board, $rules);
+$boardHistory = new BoardHistory();
+$boardHistory->setPrevBoardState([]);
 
 // можно указать в ручную
-//$board->setCell(1, 2, 1);
-//$board->setCell(2, 2, 1);
-//$board->setCell(3, 2, 1);
+// можно протестировать как реагирует программа на бесконечно повторяющиеся клетки
+//$board->setCell(0, 0, 1);
+//$board->setCell(0, 1, 1);
+//$board->setCell(1, 0, 1);
+//$board->setCell(1, 1, 1);
 
 // или воспользоваться автогенерацией
-$game->randomGenerate($board, ROWS, COLS, 15);
+$game->randomGenerate(BOARD_ROWS, BOARD_COLS, CELL_COUNT);
 
 echo "Initial state:\n";
 $board->displayBoard();
 
-while (true){
+while ($board->hasLivingCell()){
+
     echo "\nNext generation:\n";
-    $game->getNextGeneration();
+    $newGen = $game->getNextGeneration();
     $board->displayBoard();
-    sleep(5);
+
+    $currentBoard = $newGen->getBoard();
+    $prevBoard = $boardHistory->getPrevBoardState();
+
+    if ($currentBoard == $prevBoard) {
+        echo "Текущее состояние доски и предыдущее состояние доски идентичны\n";
+        break;
+    }
+
+    $boardHistory->setPrevBoardState($newGen->getBoard());
 }
+
+echo "\nIteration count: " . $board->getIterationCount() . "\n";
+echo "\nGAME OVER\n";
